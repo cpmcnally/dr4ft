@@ -34,13 +34,18 @@ async function fetch() {
             return acc;
           },{}),
           cardsByColor: Object.entries(cards).reduce((acc, [cardCode]) => {
+			if (!("c" in acc)) {
+				["c", "W", "B", "U", "R", "G"].forEach((color) => {
+					acc[color] = {};
+				});
+			}
             try {
-              const {uuid, colorIdentity, type} = getCard(cardCode);
-              if (type === "Land" || colorIdentity.length === 0) {
-                (acc["c"] = acc["c"] || []).push(uuid);
+              const {uuid, colors, type} = getCard(cardCode);
+              if (type === "Land" || colors.length === 0) {
+                acc["c"][uuid] = 1;
               } else {
-                colorIdentity.forEach((color) => {
-                  (acc[color] = acc[color] || []).push(uuid);
+                colors.forEach((color) => {
+                  acc[color][uuid] = 1 / colors.length; // 60 is divisible by 2, 3, 4, and 5; keeps the weights integer
                 });
               }
             } catch(err) {

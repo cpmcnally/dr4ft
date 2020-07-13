@@ -70,21 +70,23 @@ function getRandomCardsWithColorBalance({cardsByColor, cards}, numberOfCardsToPi
 
   // Pick one card of each color
   ["G", "U", "W", "B", "R"].forEach((color) => {
-    ret.add(sample(cardsByColor[color]));
+    ret.add(weighted.select(cardsByColor[color]));
   });
   
-  const toPick = numberOfCardsToPick - ret.size
+  const toPick = numberOfCardsToPick - ret.size;
   
   const Ncards = Object.keys(cards).length;
   
+  const sumWeights = obj => Object.values(obj).reduce((a, b) => a + b);
+  
   //const colorlessProbFactor = (toPick + 5) / toPick
   const nums = {
-    "W": (1 + (5 / toPick) - (Ncards / (toPick * cardsByColor["W"].length))) * cardsByColor["W"].length / Ncards,
-    "B": (1 + (5 / toPick) - (Ncards / (toPick * cardsByColor["B"].length))) * cardsByColor["B"].length / Ncards,
-    "U": (1 + (5 / toPick) - (Ncards / (toPick * cardsByColor["U"].length))) * cardsByColor["U"].length / Ncards,
-    "R": (1 + (5 / toPick) - (Ncards / (toPick * cardsByColor["R"].length))) * cardsByColor["R"].length / Ncards,
-    "G": (1 + (5 / toPick) - (Ncards / (toPick * cardsByColor["G"].length))) * cardsByColor["G"].length / Ncards,
-    "c": ((toPick + 5) / toPick) * cardsByColor["c"].length / Ncards,
+    "W": (1 + (5 / toPick) - (Ncards / (toPick * sumWeights(cardsByColor["W"])))) * sumWeights(cardsByColor["W"]) / Ncards,
+    "B": (1 + (5 / toPick) - (Ncards / (toPick * sumWeights(cardsByColor["B"])))) * sumWeights(cardsByColor["B"]) / Ncards,
+    "U": (1 + (5 / toPick) - (Ncards / (toPick * sumWeights(cardsByColor["U"])))) * sumWeights(cardsByColor["U"]) / Ncards,
+    "R": (1 + (5 / toPick) - (Ncards / (toPick * sumWeights(cardsByColor["R"])))) * sumWeights(cardsByColor["R"]) / Ncards,
+    "G": (1 + (5 / toPick) - (Ncards / (toPick * sumWeights(cardsByColor["G"])))) * sumWeights(cardsByColor["G"]) / Ncards,
+    "c": ((toPick + 5) / toPick) * sumWeights(cardsByColor["c"]) / Ncards,
   };
   
   //const total = Object.values(nums).reduce((total, num) => total + num);
@@ -95,7 +97,7 @@ function getRandomCardsWithColorBalance({cardsByColor, cards}, numberOfCardsToPi
   //console.log(cardsByColor["W"])
   while (ret.size < numberOfCardsToPick) {
     const randomColor = weighted.select(nums); //, { total }
-    ret.add(sample(cardsByColor[randomColor]));
+    ret.add(weighted.select(cardsByColor[randomColor]));
   }
   return [...ret];
 }
