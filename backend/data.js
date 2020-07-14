@@ -250,7 +250,8 @@ const getBoosterRulesVersion = () => {
       return "";
     }
   }
-  return boosterRules.repoHash;
+  return {'sha':boosterRules.repoHash,
+          'commonsHaveWeights':!Array.isArray(boosterRules['KTK']['sheets']['ktk_common']['cardsByColor']['W'])};
 };
 
 const saveBoosterRules = (boosterRules) => {
